@@ -6,7 +6,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # RUN sed -i.bak -re "s/([a-z]{2}.)?archive.ubuntu.com|security.ubuntu.com/mirror.kakao.com/g" /etc/apt/sources.list
 RUN apt-get update \
-    && apt-get install -y python3 python3-pip wget git less vim \
+    && apt-get install -y python3 python3-pip wget git less neovim \
     && pip3 install pandas
 RUN apt-get install -y libxml2-dev curl libssl-dev libgsl0-dev libcairo2-dev libhdf5-dev libcurl4-openssl-dev libglpk-dev libbz2-dev liblzma-dev libxt-dev libproj-dev libfribidi0 libjpeg9
 RUN echo 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/' >> /etc/apt/sources.list
@@ -29,30 +29,31 @@ RUN apt-get update -y && \
     apt-get update
 
 RUN Rscript -e 'install.packages("optparse", repos="http://cran.rstudio.com/", dependencies=TRUE)'
+RUN Rscript -e 'install.packages("gridExtra", repos="http://cran.rstudio.com/", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("data.table", repos="http://cran.rstudio.com/", dependencies=TRUE)'
-RUN Rscript -e 'install.packages("tidyr", repos="http://cran.rstudio.com/", dependencies=TRUE)'
-RUN Rscript -e 'install.packages("dplyr", repos="http://cran.rstudio.com/", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("BiocManager", repos="http://cran.rstudio.com/", dependencies=TRUE);'
-RUN Rscript -e 'BiocManager::install(version = "3.12");'
-RUN Rscript -e 'BiocManager::install("DESeq2")'
+RUN Rscript -e 'BiocManager::install("MutationalPatterns")'
+RUN Rscript -e 'BiocManager::install("BSgenome")'
 RUN Rscript -e 'BiocManager::install("ggplot2")'
-RUN Rscript -e 'BiocManager::install("clusterProfiler")'
-RUN Rscript -e 'BiocManager::install("DOSE")'
-RUN Rscript -e 'BiocManager::install("KEGG.db")'
-RUN Rscript -e 'BiocManager::install("org.Mm.eg.db")'
-RUN Rscript -e 'BiocManager::install("org.Hs.eg.db")'
-RUN Rscript -e 'BiocManager::install("pheatmap")'
-RUN Rscript -e 'BiocManager::install("genefilter")'
-RUN Rscript -e 'BiocManager::install("RColorBrewer")'
-RUN Rscript -e 'BiocManager::install("GO.db")'
-RUN Rscript -e 'BiocManager::install("topGO")'
-RUN Rscript -e 'BiocManager::install("gage")'
-RUN Rscript -e 'BiocManager::install("ggsci")'
-RUN Rscript -e 'BiocManager::install("curl")'
-RUN Rscript -e 'BiocManager::install("biomaRt")'
-RUN Rscript -e 'BiocManager::install("EnhancedVolcano")'
-RUN Rscript -e 'BiocManager::install("fgsea")'
-RUN Rscript -e 'BiocManager::install("DEGreport")'
+  # RUN Rscript -e 'BiocManager::install("DESeq2")'
+  # RUN Rscript -e 'BiocManager::install("ggplot2")'
+  # RUN Rscript -e 'BiocManager::install("clusterProfiler")'
+  # RUN Rscript -e 'BiocManager::install("DOSE")'
+  # RUN Rscript -e 'BiocManager::install("KEGG.db")'
+  # RUN Rscript -e 'BiocManager::install("org.Mm.eg.db")'
+  # RUN Rscript -e 'BiocManager::install("org.Hs.eg.db")'
+  # RUN Rscript -e 'BiocManager::install("pheatmap")'
+  # RUN Rscript -e 'BiocManager::install("genefilter")'
+  # RUN Rscript -e 'BiocManager::install("RColorBrewer")'
+  # RUN Rscript -e 'BiocManager::install("GO.db")'
+  # RUN Rscript -e 'BiocManager::install("topGO")'
+  # RUN Rscript -e 'BiocManager::install("gage")'
+  # RUN Rscript -e 'BiocManager::install("ggsci")'
+  # RUN Rscript -e 'BiocManager::install("curl")'
+  # RUN Rscript -e 'BiocManager::install("biomaRt")'
+  # RUN Rscript -e 'BiocManager::install("EnhancedVolcano")'
+  # RUN Rscript -e 'BiocManager::install("fgsea")'
+  # RUN Rscript -e 'BiocManager::install("DEGreport")'
 
 # error occured
 # RUN Rscript -e 'BiocManager::install("reactome.db");'
@@ -67,9 +68,9 @@ RUN conda update -y conda
 
 # pull git repo and install conda env for rna sequencing
 WORKDIR /home/
-RUN git clone https://github.com/WilliamJeong2/snakemake_RNA-seq.git
+RUN git clone https://github.com/WilliamJeong2/snakemake_DNA-seq.git
 RUN conda install -c conda-forge mamba
-RUN mamba env create -f snakemake_RNA-seq/envs/global_env.yaml
+RUN mamba env create -f snakemake_DNA-seq/envs/global_env.yaml
 
 # Clean up
 RUN cd / && \
@@ -79,11 +80,13 @@ RUN cd / && \
   rm -rf /var/lib/apt/lists/* && \
   apt-get clean
 
-RUN cat /home/snakemake_RNA-seq/docker/conda_init.sh >> /root/.bashrc
-RUN echo "conda activate rnaseq" >> /root/.bashrc
+RUN cat /home/snakemake_DNA-seq/docker/conda_init.sh >> /root/.bashrc
+RUN echo "conda activate dnaseq" >> /root/.bashrc
 
 # Make RUN commands use the new environment
 SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
-CMD /bin/bash -c "source /root/.bashrc"
+RUN chmod -R 777 /home/snakemake_RNA-seq/
+RUN /bin/bash -c "source /root/.bashrc"
+RUN conda clean -y -a
 
-WORKDIR /home/snakemake_RNA-seq
+WORKDIR /home/snakemake_DNA-seq
