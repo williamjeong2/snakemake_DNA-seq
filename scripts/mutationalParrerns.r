@@ -1,4 +1,4 @@
-list.of.packages <- c("optparse", "data.table", "gridExtra")
+list.of.packages <- c("optparse", "data.table", "gridExtra", "R.utils")
 list.of.bio.packages <- c("MutationalPatterns", "BSgenome", "ggplot2")
 
 not.installed.bio.packages <- list.of.bio.packages[!(list.of.bio.packages %in% installed.packages()[, "Package"])]
