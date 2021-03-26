@@ -7,6 +7,8 @@ dependencies:
   - cutadapt=3.2
   - fastqc=0.11.9
   - qualimap=2.2.2d
+  - r-biocmanager
+  - r-optparse
   # - gatk4=4.2.0.0
   - python=3.8
   - snakemake=5.30.2
