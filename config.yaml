@@ -1,6 +1,6 @@
 samples: samples.tsv
 units: units.tsv
-
+threads: 50
 ref:
   # ensembl species name
   species: homo_sapiens

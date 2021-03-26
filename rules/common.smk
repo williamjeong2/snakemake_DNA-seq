@@ -14,6 +14,7 @@ container: "continuumio/miniconda3:4.8.2"
 
 ###### Config file and sample sheets #####
 configfile: "config.yaml"
+THREADS: config['threads']
 
 
 validate(config, schema="../schemas/config.schema.yaml")

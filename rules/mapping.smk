@@ -10,7 +10,7 @@ rule trim_reads_se:
     resources:
         mem_mb=61260
     threads:
-        35
+        THREADS
     log:
         "logs/trimmomatic/{sample}-{unit}.log",
     wrapper:
@@ -33,7 +33,7 @@ rule trim_reads_pe:
     resources:
         mem_mb=61260
     threads:
-        35
+        THREADS
     log:
         "logs/trimmomatic/{sample}-{unit}.log",
     wrapper:
@@ -53,7 +53,7 @@ rule map_reads:
         extra=get_read_group,
         sort="samtools",
         sort_order="coordinate",
-    threads: 35
+    threads: THREADS
     wrapper:
         "0.72.0/bio/bwa-mem2/mem"
 
@@ -90,7 +90,7 @@ rule recalibrate_base_qualities:
     resources:
         mem_gb=30
     threads:
-    	35
+    	THREADS
     log:
         "logs/gatk/bqsr/{sample}-{unit}.log",
     wrapper:
@@ -103,7 +103,7 @@ rule samtools_index:
     output:
         "{prefix}.bam.bai",
     threads:
-        35
+        THREADS
     log:
         "logs/samtools/index/{prefix}.log",
     wrapper:
